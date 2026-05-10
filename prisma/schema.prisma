@@ -21,6 +21,7 @@ model Shop {
   ownerId     String
   owner       User        @relation(fields: [ownerId], references: [id])
   inventory   Inventory[]
+  sales       Sale[]
   createdAt   DateTime    @default(now())
 }
 
@@ -32,6 +33,7 @@ model Medicine {
   strength     String?
   category     String?
   inventory    Inventory[]
+  saleItems    SaleItem[]
   createdAt    DateTime    @default(now())
 }
 
@@ -43,9 +45,26 @@ model Inventory {
   price       Float
   batchNumber String?
   expiryDate  DateTime?
-
   shop        Shop     @relation(fields: [shopId], references: [id])
   medicine    Medicine @relation(fields: [medicineId], references: [id])
-
   @@unique([shopId, medicineId])
+}
+
+model Sale {
+  id        String     @id @default(uuid())
+  shopId    String
+  shop      Shop       @relation(fields: [shopId], references: [id])
+  total     Float      @default(0)
+  items     SaleItem[]
+  createdAt DateTime   @default(now())
+}
+
+model SaleItem {
+  id         String   @id @default(uuid())
+  saleId     String
+  sale       Sale     @relation(fields: [saleId], references: [id])
+  medicineId String
+  medicine   Medicine @relation(fields: [medicineId], references: [id])
+  quantity   Int
+  price      Float
 }

@@ -35,3 +35,58 @@ export const getShops = async (req: Request, res: Response) => {
         return sendResponse(res, 500, false, null, "Internal server error while retrieving shops.");
     }
 };
+
+export const getShopAnalytics = async (req: Request, res: Response) => {
+    try {
+        const shopId = req.params.shopId;
+
+        if (!shopId) {
+            return sendResponse(res, 400, false, null, "shopId is required.");
+        }
+
+        const aggregations = await prisma.sale.aggregate({
+            _sum: {
+                total: true
+            },
+            where: {
+                shopId: String(shopId)
+            }
+        });
+
+        const totalRevenue = aggregations._sum.total || 0;
+
+        return sendResponse(res, 200, true, { totalRevenue }, "Shop analytics retrieved successfully.");
+    } catch (error: any) {
+        console.error("Error getting shop analytics:", error);
+        return sendResponse(res, 500, false, null, "Internal server error while retrieving analytics.");
+    }
+};
+
+export const getLowStockAlerts = async (req: Request, res: Response) => {
+    try {
+        const shopId = req.params.shopId;
+
+        if (!shopId) {
+            return sendResponse(res, 400, false, null, "shopId is required.");
+        }
+
+        const lowStockInventory = await prisma.inventory.findMany({
+            where: {
+                shopId: String(shopId),
+                quantity: {
+                    lt: 10
+                }
+            },
+            include: {
+                medicine: true
+            }
+        });
+
+        const medicines = lowStockInventory.map((item: any) => item.medicine);
+
+        return sendResponse(res, 200, true, medicines, "Low stock alerts retrieved successfully.");
+    } catch (error: any) {
+        console.error("Error getting low stock alerts:", error);
+        return sendResponse(res, 500, false, null, "Internal server error while retrieving low stock alerts.");
+    }
+};
