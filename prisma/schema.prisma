@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  shops     Shop[]
+  createdAt DateTime @default(now())
+}
+
+model Shop {
+  id          String      @id @default(uuid())
+  name        String
+  ownerId     String
+  owner       User        @relation(fields: [ownerId], references: [id])
+  inventory   Inventory[]
+  sales       Sale[]
+  createdAt   DateTime    @default(now())
+}
+
+model Medicine {
+  id           String      @id @default(uuid())
+  name         String
+  genericName  String?
+  manufacturer String?
+  strength     String?
+  category     String?
+  inventory    Inventory[]
+  saleItems    SaleItem[]
+  createdAt    DateTime    @default(now())
+}
+
+model Inventory {
+  id          String   @id @default(uuid())
+  shopId      String
+  medicineId  String
+  quantity    Int      @default(0)
+  price       Float
+  batchNumber String?
+  expiryDate  DateTime?
+  shop        Shop     @relation(fields: [shopId], references: [id])
+  medicine    Medicine @relation(fields: [medicineId], references: [id])
+  @@unique([shopId, medicineId])
+}
+
+model Sale {
+  id        String     @id @default(uuid())
+  shopId    String
+  shop      Shop       @relation(fields: [shopId], references: [id])
+  total     Float      @default(0)
+  items     SaleItem[]
+  createdAt DateTime   @default(now())
+}
+
+model SaleItem {
+  id         String   @id @default(uuid())
+  saleId     String
+  sale       Sale     @relation(fields: [saleId], references: [id])
+  medicineId String
+  medicine   Medicine @relation(fields: [medicineId], references: [id])
+  quantity   Int
+  price      Float
+}

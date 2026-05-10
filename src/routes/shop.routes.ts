@@ -1,9 +1,11 @@
-import { Router } from 'express';
-import { createShop } from '../controllers/shop.controller';
-import { requireAuth } from '../middlewares/auth';
+import express from 'express';
+import { createShop, getShops, getShopAnalytics, getLowStockAlerts } from '../controllers/shop.controller';
 
-const router = Router();
+const router = express.Router();
 
-router.post('/create', requireAuth, createShop);
+router.post('/create', createShop);
+router.get('/all', getShops);
+router.get('/:shopId/analytics', getShopAnalytics);
+router.get('/:shopId/alerts', getLowStockAlerts);
 
 export default router;

@@ -4,6 +4,8 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { sendResponse } from './utils/response';
 import shopRoutes from './routes/shop.routes';
+import inventoryRoutes from './routes/inventory.routes';
+import saleRoutes from './routes/sale.routes';
 
 dotenv.config();
 
@@ -16,6 +18,8 @@ app.use(express.json());
 
 // Mount the shop routes
 app.use('/api/shops', shopRoutes);
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/sales', saleRoutes);
 
 app.get('/ping', (req: Request, res: Response) => {
     return sendResponse(res, 200, true, null, "Server is operational and strictly typed.");
