@@ -6,9 +6,11 @@
   "scripts": {
     "build": "npx prisma generate && tsc",
     "start": "node dist/index.js",
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "test:audit": "tsx scripts/test-week1.ts"
   },
   "keywords": [],
+  
   "author": "",
   "license": "ISC",
   "dependencies": {

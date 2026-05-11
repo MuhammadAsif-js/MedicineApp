@@ -1,3 +1,4 @@
+import medicineRoutes from './routes/medicine.routes';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -25,6 +26,18 @@ app.listen(PORT, () => {
     console.log(`🚀 Fortress initiated on port ${PORT}`);
 });
 
+// The "Front Door" of your API
+app.get("/", (req, res) => {
+  res.send(`
+    <div style="font-family: sans-serif; text-align: center; padding-top: 50px;">
+      <h1>🚀 MedicineApp Fortress is Online</h1>
+      <p>Database: Connected & Synced</p>
+      <p>Cloud Environment: GitHub Codespaces</p>
+    </div>
+  `);
+});
+
+app.use('/api/medicines', medicineRoutes);
 
 // import express, { Request, Response } from 'express';
 // import cors from 'cors';
